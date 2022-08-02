@@ -1,0 +1,54 @@
+from kivy.app import App
+from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import StringProperty
+from kivy.uix.button import Button
+from kivy.uix.textinput import TextInput
+from requests import post
+from translate import Translator
+
+KV = '''
+MyBL:
+
+    orientation: "vertical"
+    size_hint: (0.95, 0.95)
+    pos_hint: {"center_x": 0.5, "center_y":0.5}
+
+    TextInput:
+        id: Inp
+        multiline: False
+        padding_y: (5,5)
+        size_hint: (1, 0.5)
+
+    Button:
+        text: "ПЕРЕВЕСТИ"
+        on_press: root.callback()
+        size_hint: (1,0.5)
+
+    Label:
+        font_size: "18sp"
+        text: root.data_label
+    
+'''
+class MyBL(BoxLayout):
+
+    data_label = StringProperty("Введите запрос")
+
+    def callback(self):
+        translator = Translator(from_lang="russian",to_lang="english")
+        self.data_label = translator.translate(self.ids.Inp.text)
+    
+class MyApp(App):
+    
+    running = True
+    
+    def build(self):
+        return Builder.load_string(KV)
+
+    def on_stop(self):
+        self.running = False
+
+
+        
+        
+MyApp().run()
